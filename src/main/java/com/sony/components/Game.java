@@ -1,4 +1,5 @@
 package com.sony.components;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,15 +28,16 @@ public class Game implements Runnable {
     private volatile Boolean isFirstFiveNumbersWinnerAnnounced;
     private volatile Boolean isFullHouseWinnerAnnounced;
     private AtomicBoolean isFullNumbersAnnounced;
-    @Value("${rows:5}")
+
+    @Value("${game.rows:5}")
     private Integer rows;
-    @Value("${columns:10}")
+    @Value("${game.columns:10}")
     private Integer columns;
-    @Value("${itemsPerRow:5}")
+    @Value("${game.itemsPerRow:5}")
     private Integer itemsPerRow;
-    @Value("${bound:90}")
+    @Value("${game.bound:90}")
     private Integer bound;
-    @Value("${numberOfPlayers:5}")
+    @Value("${game.numberOfPlayers:5}")
     private Integer numberOfPlayers;
     private List<Integer> announcedNumbers;
     private ThreadLocalRandom threadLocalRandom;
@@ -47,8 +49,30 @@ public class Game implements Runnable {
     private AtomicInteger nextNumberToGenerate;
     private Map<WinningCombinations, Player> summary;
 
+
     public Game() {
-        logger.info(rows+" "+columns+" "+itemsPerRow);
+        this.setGameRunning(new AtomicBoolean(true));
+        this.setRows(rows);
+        this.setColumns(columns);
+        this.setItemsPerRow(itemsPerRow);
+        this.setBound(bound);
+        this.setPlayerList(new ArrayList<>());
+        this.setNumberOfPlayers(numberOfPlayers);
+        observable = new PropertyChangeSupport(this);
+        this.setAnnouncedNumbers(new ArrayList<>());
+        threadLocalRandom = ThreadLocalRandom.current();
+        this.setTopRowWinnerAnnounced(false);
+        this.setFirstFiveNumbersWinnerAnnounced(false);
+        this.setFullHouseWinnerAnnounced(false);
+        this.setIsFullNumbersAnnounced(new AtomicBoolean(false));
+        rangeOfNumbersToBeGenerated = new ArrayList<>();
+        nextNumberToGenerate = new AtomicInteger(0);
+        this.setSummary(new HashMap<>());
+    }
+
+
+    public Game(Integer rows, Integer columns, Integer itemsPerRow, Integer bound, Integer numberOfPlayers) {
+
         this.setGameRunning(new AtomicBoolean(true));
         this.setRows(rows);
         this.setColumns(columns);
@@ -137,6 +161,7 @@ public class Game implements Runnable {
         return dealer;
     }
 
+    @Autowired
     void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
@@ -149,7 +174,7 @@ public class Game implements Runnable {
         return announcedNumbers;
     }
 
-    protected void setAnnouncedNumbers(List<Integer> announcedNumbers) {
+    void setAnnouncedNumbers(List<Integer> announcedNumbers) {
         this.announcedNumbers = announcedNumbers;
     }
 
@@ -157,7 +182,7 @@ public class Game implements Runnable {
         isFullHouseWinnerAnnounced = fullHouseWinnerAnnounced;
     }
 
-    public Integer getRows() {
+    Integer getRows() {
         return rows;
     }
 

@@ -21,12 +21,13 @@ public class Tambola {
         Integer columns = getNumberOfColumns(inputScanner);
         Integer itemsPerRow = getNumberOfItemsPerRow(inputScanner);
         GameValidator gameValidator=new GameValidator();
-        Game game = new Game();
+        Game game = new Game(rows, columns, itemsPerRow, bound, numberOfPlayers);
+        /*Game game = new Game();
         game.setRows(rows);
         game.setColumns(columns);
         game.setBound(bound);
         game.setNumberOfPlayers(numberOfPlayers);
-        game.setItemsPerRow(itemsPerRow);
+        game.setItemsPerRow(itemsPerRow);*/
         Runnable dealer = new Dealer(game,gameValidator);
         ThreadGroup threadGroup = new ThreadGroup("Dealer");
         Thread dealerThread = new Thread(threadGroup, dealer, "dealerThread");
