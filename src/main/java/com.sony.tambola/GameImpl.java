@@ -65,7 +65,6 @@ public class GameImpl implements Game, Runnable {
         return stopGameFlag;
     }
 
-
     public AtomicBoolean getIsFullNumbersAnnounced() {
         return isFullNumbersAnnounced;
     }
