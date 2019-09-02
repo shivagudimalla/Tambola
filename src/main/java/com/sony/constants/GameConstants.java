@@ -1,4 +1,4 @@
-package com.sony.components;
+package com.sony.constants;
 
 public final class GameConstants {
 

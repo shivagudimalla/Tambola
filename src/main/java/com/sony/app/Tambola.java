@@ -1,5 +1,8 @@
-package com.sony.components;
+package com.sony.app;
 
+import com.sony.components.Dealer;
+import com.sony.components.Game;
+import com.sony.validator.GameValidator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -12,22 +15,23 @@ import java.util.Scanner;
 public class Tambola {
 
     final static Logger logger = Logger.getLogger(Tambola.class);
+    private static Integer bound;
+    private static Integer numberOfPlayers;
+    private static Integer rows;
+    private static Integer columns;
+    private static Integer itemsPerRow;
+
     private static Scanner inputScanner = new Scanner(System.in);
     public static void main(String args[]) throws IOException {
 
-        Integer bound = getNumbersRange(inputScanner);
-        Integer numberOfPlayers = getNumberOfPlayers(inputScanner);
-        Integer rows = getNumberOfRows(inputScanner);
-        Integer columns = getNumberOfColumns(inputScanner);
-        Integer itemsPerRow = getNumberOfItemsPerRow(inputScanner);
+        rows = getNumberOfRows(inputScanner);
+        columns = getNumberOfColumns(inputScanner);
+        itemsPerRow = getNumberOfItemsPerRow(inputScanner);
+        numberOfPlayers = getNumberOfPlayers(inputScanner);
+        bound = getNumbersRange(inputScanner);
+
         GameValidator gameValidator=new GameValidator();
         Game game = new Game(rows, columns, itemsPerRow, bound, numberOfPlayers);
-        /*Game game = new Game();
-        game.setRows(rows);
-        game.setColumns(columns);
-        game.setBound(bound);
-        game.setNumberOfPlayers(numberOfPlayers);
-        game.setItemsPerRow(itemsPerRow);*/
         Runnable dealer = new Dealer(game,gameValidator);
         ThreadGroup threadGroup = new ThreadGroup("Dealer");
         Thread dealerThread = new Thread(threadGroup, dealer, "dealerThread");
@@ -45,6 +49,10 @@ public class Tambola {
             {
                 logger.info("provide a valid number range greater than zero: ");
                 bound = inputScanner.nextInt();
+                if (bound < (Tambola.rows * Tambola.itemsPerRow)) {
+                    logger.info("Range provided is less than product of rows and items per row , tickets cannot be created");
+                    inputScanner.next();
+                }
             }
             catch ( InputMismatchException ime)
             {
@@ -75,7 +83,6 @@ public class Tambola {
 
     public static Integer getNumberOfRows(Scanner inputScanner) {
 
-        //Scanner rowScanner = new Scanner(System.in);
         Integer rows  = 0;
         while (rows < 1)
         {

@@ -1,6 +1,5 @@
 package com.sony.app;
 
-import com.sony.components.GameProperties;
 import com.sony.services.GameService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ public class GameRunner implements CommandLineRunner {
     final static Logger logger = Logger.getLogger(GameRunner.class);
     @Autowired
     private GameService gameService;
-    @Autowired
-    private GameProperties gameProperties;
     public static void main(String[] args) throws Exception {
         logger.info("Game starting");
         SpringApplication.run(GameRunner.class, args);

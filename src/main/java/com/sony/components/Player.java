@@ -1,4 +1,6 @@
 package com.sony.components;
+
+import com.sony.validator.GameValidator;
 import org.apache.log4j.Logger;
 
 import java.beans.PropertyChangeEvent;
@@ -6,7 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sony.components.GameConstants.EARLY_FIVE_COUNT_TO_CHECK;
+import static com.sony.constants.GameConstants.EARLY_FIVE_COUNT_TO_CHECK;
 
 /**
  * Created by shivakumargudimalla on 8/30/19.
@@ -42,11 +44,11 @@ public class Player implements PropertyChangeListener,Runnable
         this.numbersConsumed = numbersConsumed;
     }
 
-    public com.sony.components.GameValidator getGameValidator() {
+    public com.sony.validator.GameValidator getGameValidator() {
         return GameValidator;
     }
 
-    public void setGameValidator(com.sony.components.GameValidator gameValidator) {
+    public void setGameValidator(com.sony.validator.GameValidator gameValidator) {
         GameValidator = gameValidator;
     }
 

@@ -1,12 +1,14 @@
-package com.sony.components;
+package com.sony.validator;
 
+import com.sony.Exception.InvalidPropertiesException;
+import com.sony.components.Ticket;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 @Component
 public class GameValidator {
 
-    public synchronized boolean checkTopRowWinner(Ticket ticket,List<Integer> announcedNumbers) {
+    public synchronized boolean checkTopRowWinner(Ticket ticket, List<Integer> announcedNumbers) {
 
         boolean isWinner = false;
             List<Integer> topRowTickerNumbers = ticket.getTicketNumbers().get(0);
@@ -51,6 +53,29 @@ public class GameValidator {
             }
 
         return isWinner;
+    }
+
+    public void validatePropertiesBeforeStartingGame(Integer rows, Integer columns, Integer itemsPerRow, Integer bound, Integer numberOfPlayers) throws InvalidPropertiesException {
+        if (rows < 1) {
+            throw new InvalidPropertiesException("Please enter valid number of rows should be greater than zero");
+        }
+        if (columns < 1) {
+            throw new InvalidPropertiesException("Please enter valid number of columns should be greater than zero");
+        }
+        if (itemsPerRow < 1) {
+            throw new InvalidPropertiesException("Please enter valid number of Items per row should be greater than zero");
+
+        }
+
+        if (bound < 1) {
+            throw new InvalidPropertiesException("Please enter valid range should be greater than zero");
+
+        }
+
+        if (bound < (rows * itemsPerRow)) {
+
+            throw new InvalidPropertiesException("Range provided is less than product of rows and items per row , tickets cannot be created");
+        }
     }
 
 

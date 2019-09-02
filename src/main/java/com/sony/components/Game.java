@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.sony.components.GameConstants.*;
+import static com.sony.constants.GameConstants.*;
 
 /**
  * Created by shivakumargudimalla on 8/31/19.
@@ -50,7 +50,7 @@ public class Game implements Runnable {
     private Map<WinningCombinations, Player> summary;
 
 
-    public Game() {
+    public Game() throws Exception {
         this.setGameRunning(new AtomicBoolean(true));
         this.setRows(rows);
         this.setColumns(columns);
@@ -117,7 +117,7 @@ public class Game implements Runnable {
         this.isGameRunning = stopGameFlag;
     }
 
-    protected Integer getNumberOfPlayers() {
+    public Integer getNumberOfPlayers() {
         return numberOfPlayers;
     }
 
@@ -182,7 +182,7 @@ public class Game implements Runnable {
         isFullHouseWinnerAnnounced = fullHouseWinnerAnnounced;
     }
 
-    Integer getRows() {
+    public Integer getRows() {
         return rows;
     }
 
@@ -242,6 +242,7 @@ public class Game implements Runnable {
         }
         printSummary();
     }
+
 
     private void printSummary() {
         if(this.getSummary().size() > 0) {
