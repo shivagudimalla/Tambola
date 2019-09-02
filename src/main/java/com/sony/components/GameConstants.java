@@ -1,4 +1,4 @@
-package com.sony.tambola;
+package com.sony.components;
 
 public final class GameConstants {
 

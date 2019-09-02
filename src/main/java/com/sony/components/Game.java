@@ -1,5 +1,9 @@
-package com.sony.tambola;
+package com.sony.components;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
@@ -9,11 +13,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.sony.tambola.GameConstants.*;
+import static com.sony.components.GameConstants.*;
 
 /**
  * Created by shivakumargudimalla on 8/31/19.
  */
+@Component
 public class Game implements Runnable {
 
     final static Logger logger = Logger.getLogger(Game.class);
@@ -22,10 +27,15 @@ public class Game implements Runnable {
     private volatile Boolean isFirstFiveNumbersWinnerAnnounced;
     private volatile Boolean isFullHouseWinnerAnnounced;
     private AtomicBoolean isFullNumbersAnnounced;
+    @Value("${rows:5}")
     private Integer rows;
+    @Value("${columns:10}")
     private Integer columns;
+    @Value("${itemsPerRow:5}")
     private Integer itemsPerRow;
+    @Value("${bound:90}")
     private Integer bound;
+    @Value("${numberOfPlayers:5}")
     private Integer numberOfPlayers;
     private List<Integer> announcedNumbers;
     private ThreadLocalRandom threadLocalRandom;
@@ -37,8 +47,8 @@ public class Game implements Runnable {
     private AtomicInteger nextNumberToGenerate;
     private Map<WinningCombinations, Player> summary;
 
-    public Game(Integer rows, Integer columns, Integer itemsPerRow, Integer bound, Integer numberOfPlayers) {
-
+    public Game() {
+        logger.info(rows+" "+columns+" "+itemsPerRow);
         this.setGameRunning(new AtomicBoolean(true));
         this.setRows(rows);
         this.setColumns(columns);

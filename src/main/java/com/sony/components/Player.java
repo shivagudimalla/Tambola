@@ -1,4 +1,4 @@
-package com.sony.tambola;
+package com.sony.components;
 import org.apache.log4j.Logger;
 
 import java.beans.PropertyChangeEvent;
@@ -6,7 +6,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sony.tambola.GameConstants.EARLY_FIVE_COUNT_TO_CHECK;
+import static com.sony.components.GameConstants.EARLY_FIVE_COUNT_TO_CHECK;
 
 /**
  * Created by shivakumargudimalla on 8/30/19.
@@ -42,11 +42,11 @@ public class Player implements PropertyChangeListener,Runnable
         this.numbersConsumed = numbersConsumed;
     }
 
-    public com.sony.tambola.GameValidator getGameValidator() {
+    public com.sony.components.GameValidator getGameValidator() {
         return GameValidator;
     }
 
-    public void setGameValidator(com.sony.tambola.GameValidator gameValidator) {
+    public void setGameValidator(com.sony.components.GameValidator gameValidator) {
         GameValidator = gameValidator;
     }
 

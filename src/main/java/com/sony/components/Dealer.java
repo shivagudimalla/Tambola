@@ -1,29 +1,30 @@
-package com.sony.tambola;
+package com.sony.components;
 
 import org.apache.log4j.Logger;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by shivakumargudimalla on 8/30/19.
  */
+
+@Component
 public class Dealer implements Runnable {
 
     final static Logger logger = Logger.getLogger(Dealer.class);
-    private String name;
+    @Autowired
     private Game game;
+    @Autowired
     private GameValidator gameValidator;
 
-    public Dealer(Game game, String name, GameValidator gameValidator) {
+    public Dealer(Game game, GameValidator gameValidator) {
         this.setGame(game);
-        this.setName(name);
         this.setGameValidator(gameValidator);
         game.setDealer(this);
     }
 
-    public String getName() {
-        return name;
-    }
+
 
 
     public GameValidator getGameValidator() {
@@ -32,10 +33,6 @@ public class Dealer implements Runnable {
 
     public void setGameValidator(GameValidator gameValidator) {
         this.gameValidator = gameValidator;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
 

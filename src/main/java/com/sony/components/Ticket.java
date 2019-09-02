@@ -1,13 +1,10 @@
-package com.sony.tambola;
+package com.sony.components;
 
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Created by shivakumargudimalla on 8/29/19.

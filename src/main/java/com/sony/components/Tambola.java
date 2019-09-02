@@ -1,4 +1,4 @@
-package com.sony.tambola;
+package com.sony.components;
 
 import org.apache.log4j.Logger;
 
@@ -21,8 +21,13 @@ public class Tambola {
         Integer columns = getNumberOfColumns(inputScanner);
         Integer itemsPerRow = getNumberOfItemsPerRow(inputScanner);
         GameValidator gameValidator=new GameValidator();
-        Game game = new Game(rows, columns, itemsPerRow, bound, numberOfPlayers);
-        Runnable dealer = new Dealer(game, "Dealer",gameValidator);
+        Game game = new Game();
+        game.setRows(rows);
+        game.setColumns(columns);
+        game.setBound(bound);
+        game.setNumberOfPlayers(numberOfPlayers);
+        game.setItemsPerRow(itemsPerRow);
+        Runnable dealer = new Dealer(game,gameValidator);
         ThreadGroup threadGroup = new ThreadGroup("Dealer");
         Thread dealerThread = new Thread(threadGroup, dealer, "dealerThread");
 

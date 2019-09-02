@@ -1,7 +1,9 @@
-package com.sony.tambola;
+package com.sony.components;
+
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 public class GameValidator {
 
     public synchronized boolean checkTopRowWinner(Ticket ticket,List<Integer> announcedNumbers) {
