@@ -53,6 +53,7 @@ public class Dealer implements Runnable {
         if(!this.getGame().isTopRowWinnerAnnounced()) {
             if (this.getGameValidator().checkTopRowWinner(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
                 player.getWinningCombinations().add(WinningCombinations.TOPLINE);
+                this.getGame().getSummary().put(WinningCombinations.TOPLINE,player);
                 this.getGame().setTopRowWinnerAnnounced(true);
                 logger.info("Top row numbers for  " + player.getName() + " is " + player.getTicket().getTicketNumbers().get(0));
                 logger.info("Winner of Top Line is " + player.getName());
@@ -69,9 +70,10 @@ public class Dealer implements Runnable {
 
         if(!this.getGame().isFullHouseWinnerAnnounced()) {
             if (this.getGameValidator().checkFullHouse(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
+                this.getGame().setFullHouseWinnerAnnounced(true);
                 logger.info("Adding winning combinations");
                 player.getWinningCombinations().add(WinningCombinations.FULLHOUSE);
-                this.getGame().setFullHouseWinnerAnnounced(true);
+                this.getGame().getSummary().put(WinningCombinations.FULLHOUSE,player);
                 logger.info("Winner of fullHouse is " + player.getName());
                 return true;
             }
@@ -87,6 +89,7 @@ public class Dealer implements Runnable {
         if(!this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
             if (this.getGameValidator().checkFirstFiveNumbers(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
                 player.getWinningCombinations().add(WinningCombinations.EARLYFIVE);
+                this.getGame().getSummary().put(WinningCombinations.EARLYFIVE,player);
                 this.getGame().setFirstFiveNumbersWinnerAnnounced(true);
                 logger.info("Winner of firstFiveNumber is " + player.getName());
                 return true;
