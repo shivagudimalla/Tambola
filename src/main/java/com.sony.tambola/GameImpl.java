@@ -59,7 +59,6 @@ public class GameImpl implements Game, Runnable {
         rangeOfNumbersToBeGenerated=new ArrayList<>();
         nextNumberToGenerate=new AtomicInteger(0);
 
-
     }
 
     public AtomicBoolean getStopGameFlag() {
