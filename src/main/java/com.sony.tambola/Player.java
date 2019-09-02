@@ -6,6 +6,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sony.tambola.GameConstants.EARLY_FIVE_COUNT_TO_CHECK;
+
 /**
  * Created by shivakumargudimalla on 8/30/19.
  */
@@ -16,20 +18,37 @@ public class Player implements PropertyChangeListener,Runnable
     private String name;
     private String email;
     private Ticket ticket;
-    private GameImpl game;
+    private Game game;
+    private GameValidator GameValidator;
+    private List<Integer> numbersConsumed;
     private List<WinningCombinations> winningCombinations;
 
-    public Player(Ticket ticket, String name, GameImpl game, String email) {
+    public Player(Ticket ticket, String name, Game game, String email, GameValidator gameValidator) {
+        this.setGameValidator(gameValidator);
+        this.setNumbersConsumed(new ArrayList<>());
         this.setGame(game);
         this.setName(name);
         this.setTicket(ticket);
         this.setEmail(email);
         this.setWinningCombinations(new ArrayList<>());
-        this.getGame().getPlayerList().add(this);
-        this.getGame().addPropertyChangeListener(this);
     }
 
 
+    public List<Integer> getNumbersConsumed() {
+        return numbersConsumed;
+    }
+
+    public void setNumbersConsumed(List<Integer> numbersConsumed) {
+        this.numbersConsumed = numbersConsumed;
+    }
+
+    public com.sony.tambola.GameValidator getGameValidator() {
+        return GameValidator;
+    }
+
+    public void setGameValidator(com.sony.tambola.GameValidator gameValidator) {
+        GameValidator = gameValidator;
+    }
 
     public Ticket getTicket() {
         return ticket;
@@ -60,11 +79,11 @@ public class Player implements PropertyChangeListener,Runnable
         return email;
     }
 
-    public GameImpl getGame() {
+    public Game getGame() {
         return game;
     }
 
-    public void setGame(GameImpl game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 
@@ -76,28 +95,29 @@ public class Player implements PropertyChangeListener,Runnable
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Integer valueAnnounced=(Integer)evt.getNewValue();
+        this.getNumbersConsumed().add(valueAnnounced);
         logger.info("Player "+this.getName() +" consumed "+ valueAnnounced);
     }
 
     @Override
     public void run() {
-
-
-        while(!this.getGame().getStopGameFlag().get()) {
-            if (this.getGame().getAnnouncedNumbers().size() >= 5 && !this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
-                if(this.getGame().checkFirstFiveNumbers(this))
+        Integer fullCountCheckStart=this.getTicket().getRows()*this.getTicket().getItemsPerRow();
+        Integer topRowCountCheckStart=this.getTicket().getItemsPerRow();
+        while(this.getGame().getGameStatus()) {
+            if (this.getNumbersConsumed().size() >= EARLY_FIVE_COUNT_TO_CHECK && !this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
+                if(this.getGameValidator().checkFirstFiveNumbers(this.getTicket(),this.getNumbersConsumed()))
                 this.getGame().getDealer().checkFirstFiveNumbers(this);
             }
 
-            if (this.getGame().getAnnouncedNumbers().size() >= 5 && !this.getGame().isFullHouseWinnerAnnounced()) {
-                if (this.getGame().checkFullHouse(this)) {
+            if (this.getNumbersConsumed().size() >= fullCountCheckStart && !this.getGame().isFullHouseWinnerAnnounced()) {
+                if (this.getGameValidator().checkFullHouse(this.getTicket(),this.getNumbersConsumed())) {
                     this.getGame().getDealer().checkFullHouse(this);
                 }
 
             }
 
-            if (this.getGame().getAnnouncedNumbers().size() >= 5 && !this.getGame().isTopRowWinnerAnnounced()) {
-                if(this.getGame().checkTopRowWinner(this))
+            if (this.getGame().getAnnouncedNumbers().size() >= topRowCountCheckStart && !this.getGame().isTopRowWinnerAnnounced()) {
+                if(this.getGameValidator().checkTopRowWinner(this.getTicket(),this.getNumbersConsumed()))
                 this.getGame().getDealer().checkTopRowWinner(this);
             }
         }

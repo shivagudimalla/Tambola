@@ -11,93 +11,88 @@ public class Dealer implements Runnable {
 
     final static Logger logger = Logger.getLogger(Dealer.class);
     private String name;
-    private GameImpl game;
-    private AtomicBoolean isCheckingWinnerInProgress;
+    private Game game;
+    private GameValidator gameValidator;
 
-
-    public Dealer(GameImpl game, String name) {
+    public Dealer(Game game, String name, GameValidator gameValidator) {
         this.setGame(game);
         this.setName(name);
+        this.setGameValidator(gameValidator);
         game.setDealer(this);
-        this.setIsCheckingWinnerInProgress(new AtomicBoolean(false));
     }
 
     public String getName() {
         return name;
     }
 
+
+    public GameValidator getGameValidator() {
+        return gameValidator;
+    }
+
+    public void setGameValidator(GameValidator gameValidator) {
+        this.gameValidator = gameValidator;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public AtomicBoolean getIsCheckingWinnerInProgress() {
-        return isCheckingWinnerInProgress;
-    }
 
-    public void setIsCheckingWinnerInProgress(AtomicBoolean isCheckingWinnerInProgress) {
-        this.isCheckingWinnerInProgress = isCheckingWinnerInProgress;
-    }
-
-    public GameImpl getGame() {
+    public Game getGame() {
         return game;
     }
 
-    public void setGame(GameImpl game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 
 
     public synchronized boolean checkTopRowWinner(Player player) {
-        this.getIsCheckingWinnerInProgress().set(true);
         logger.info("Dealer checking Top row winner for the player " + player.getName());
-        if (this.getGame().checkTopRowWinner(player)) {
-            player.getWinningCombinations().add(WinningCombinations.TOPLINE);
-            this.getGame().setTopRowWinnerAnnounced(true);
-            logger.info("Top row numbers for  " + player.getName() + " is " + player.getTicket().getTicketNumbers().get(0));
-            logger.info("Winner of Top Line is " + player.getName());
-            this.getIsCheckingWinnerInProgress().set(false);
-            return true;
+        if(!this.getGame().isTopRowWinnerAnnounced()) {
+            if (this.getGameValidator().checkTopRowWinner(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
+                player.getWinningCombinations().add(WinningCombinations.TOPLINE);
+                this.getGame().setTopRowWinnerAnnounced(true);
+                logger.info("Top row numbers for  " + player.getName() + " is " + player.getTicket().getTicketNumbers().get(0));
+                logger.info("Winner of Top Line is " + player.getName());
+                return true;
 
-        } else {
-            this.getIsCheckingWinnerInProgress().set(false);
-            return false;
+            }
         }
+        return false;
     }
 
 
     public synchronized boolean checkFullHouse(Player player) {
-        this.getIsCheckingWinnerInProgress().set(true);
         logger.info("Dealer checking Full house for the player " + player.getName());
 
-        if (this.getGame().checkFullHouse(player)) {
-            logger.info("Adding winning combinations");
-            player.getWinningCombinations().add(WinningCombinations.FULLHOUSE);
-            this.getGame().setFullHouseWinnerAnnounced(true);
-            logger.info("Winner of fullHouse is " + player.getName());
-            this.getIsCheckingWinnerInProgress().set(false);
-            return true;
-        } else {
-            this.getIsCheckingWinnerInProgress().set(false);
-            return false;
+        if(!this.getGame().isFullHouseWinnerAnnounced()) {
+            if (this.getGameValidator().checkFullHouse(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
+                logger.info("Adding winning combinations");
+                player.getWinningCombinations().add(WinningCombinations.FULLHOUSE);
+                this.getGame().setFullHouseWinnerAnnounced(true);
+                logger.info("Winner of fullHouse is " + player.getName());
+                return true;
+            }
         }
+        return false;
 
     }
 
 
     public synchronized boolean checkFirstFiveNumbers(Player player) {
-        this.getIsCheckingWinnerInProgress().set(true);
         logger.info("Dealer checking FirstFiveNumbers for the player " + player.getName());
 
-        if (this.getGame().checkFirstFiveNumbers(player)) {
-            player.getWinningCombinations().add(WinningCombinations.EARLYFIVE);
-            this.getGame().setFirstFiveNumbersWinnerAnnounced(true);
-            logger.info("Winner of firstFiveNumber is " + player.getName());
-            this.getIsCheckingWinnerInProgress().set(false);
-            return true;
-        } else {
-            this.getIsCheckingWinnerInProgress().set(false);
-            return false;
+        if(!this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
+            if (this.getGameValidator().checkFirstFiveNumbers(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
+                player.getWinningCombinations().add(WinningCombinations.EARLYFIVE);
+                this.getGame().setFirstFiveNumbersWinnerAnnounced(true);
+                logger.info("Winner of firstFiveNumber is " + player.getName());
+                return true;
+            }
         }
+        return false;
 
     }
 

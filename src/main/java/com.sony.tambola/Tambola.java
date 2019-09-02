@@ -1,7 +1,6 @@
 package com.sony.tambola;
 
 import org.apache.log4j.Logger;
-import sun.tools.tree.FinallyStatement;
 
 import java.io.IOException;
 import java.util.InputMismatchException;
@@ -21,9 +20,9 @@ public class Tambola {
         Integer rows = getNumberOfRows(inputScanner);
         Integer columns = getNumberOfColumns(inputScanner);
         Integer itemsPerRow = getNumberOfItemsPerRow(inputScanner);
-
-        GameImpl game = new GameImpl(rows, columns, itemsPerRow, bound, numberOfPlayers);
-        Runnable dealer = new Dealer(game, "Dealer");
+        GameValidator gameValidator=new GameValidator();
+        Game game = new Game(rows, columns, itemsPerRow, bound, numberOfPlayers);
+        Runnable dealer = new Dealer(game, "Dealer",gameValidator);
         ThreadGroup threadGroup = new ThreadGroup("Dealer");
         Thread dealerThread = new Thread(threadGroup, dealer, "dealerThread");
 
