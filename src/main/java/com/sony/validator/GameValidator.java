@@ -66,6 +66,9 @@ public class GameValidator {
             throw new InvalidPropertiesException("Please enter valid number of Items per row should be greater than zero");
 
         }
+        if (itemsPerRow > columns) {
+            throw new InvalidPropertiesException("Items per row should be less than columns size");
+        }
 
         if (bound < 1) {
             throw new InvalidPropertiesException("Please enter valid range should be greater than zero");

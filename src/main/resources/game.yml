@@ -1,5 +1,5 @@
 game.rows=5
 game.columns=10
-game.itemsPerRow=5
+game.itemsPerRow=15
 game.bound=20
 game.numberOfPlayers=5

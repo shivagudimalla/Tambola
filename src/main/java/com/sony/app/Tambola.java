@@ -127,6 +127,9 @@ public class Tambola {
             {
                 logger.info("provide valid Items per row count greater than 0");
                 itemsPerRow = inputScanner.nextInt();
+                if (itemsPerRow > Tambola.columns) {
+                    logger.info("Items per row should be less than columns size");
+                }
             }
             catch ( InputMismatchException ime)
             {
