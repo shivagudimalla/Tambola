@@ -57,13 +57,13 @@ public class GameValidator {
 
     public void validatePropertiesBeforeStartingGame(Integer rows, Integer columns, Integer itemsPerRow, Integer bound, Integer numberOfPlayers) throws InvalidPropertiesException {
         if (rows < 1) {
-            throw new InvalidPropertiesException("Please enter valid number of rows should be greater than zero");
+            throw new InvalidPropertiesException("Please enter valid number of rows for ticket, should be greater than zero");
         }
         if (columns < 1) {
-            throw new InvalidPropertiesException("Please enter valid number of columns should be greater than zero");
+            throw new InvalidPropertiesException("Please enter valid number of columns for ticket, should be greater than zero");
         }
         if (itemsPerRow < 1) {
-            throw new InvalidPropertiesException("Please enter valid number of Items per row should be greater than zero");
+            throw new InvalidPropertiesException("Please enter valid number of Items per row for ticket, should be greater than zero");
 
         }
         if (itemsPerRow > columns) {
@@ -71,7 +71,7 @@ public class GameValidator {
         }
 
         if (bound < 1) {
-            throw new InvalidPropertiesException("Please enter valid range should be greater than zero");
+            throw new InvalidPropertiesException("Please enter valid range of numbers to generate ticket, should be product of rows and items per row");
 
         }
 
