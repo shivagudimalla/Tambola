@@ -5,6 +5,7 @@ import com.tambola.components.Game;
 import com.tambola.services.GameService;
 import com.tambola.services.PlayerService;
 import com.tambola.validator.GameValidator;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +17,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayInputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertTrue;
 
@@ -30,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 @TestPropertySource(locations = "classpath:game.yml")
 public class GameServiceIntegrationTest {
 
-
+    final static Logger logger = Logger.getLogger(GameServiceIntegrationTest.class);
     @Autowired
     private GameService gameService;
     @Autowired
@@ -53,15 +51,11 @@ public class GameServiceIntegrationTest {
 
     @Test
     public void testTambolaApplicationWithValidProperties() throws InterruptedException {
-        Runnable runnable = () -> {
-            gameService.startGame();
-        };
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        Future future = executor.submit(runnable);
-        if (!future.isDone()) {
-            Thread.sleep(9000);
-        }
+
+        gameService.startGame();
+        Thread.sleep(9000);
         assertTrue(game.getPlayerList().size() == 2);
+        assertTrue(game.getSummary().size() > 0);
 
     }
 
