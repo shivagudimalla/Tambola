@@ -25,9 +25,12 @@ public class Player implements PropertyChangeListener,Runnable
     private List<Integer> numbersConsumed;
     private List<WinningCombinations> winningCombinations;
 
-    public Player(String name, String email) {
+    public Player(Ticket ticket, String name, Game game, String email, GameValidator gameValidator) {
+        this.setGameValidator(gameValidator);
         this.setNumbersConsumed(new ArrayList<>());
+        this.setGame(game);
         this.setName(name);
+        this.setTicket(ticket);
         this.setEmail(email);
         this.setWinningCombinations(new ArrayList<>());
     }
@@ -54,6 +57,7 @@ public class Player implements PropertyChangeListener,Runnable
     }
 
     public void setTicket(Ticket ticket) {
+        //logger.info("Ticket of " +this.getName()+" is "+ticket.getTicketNumbers().toString());
         this.ticket = ticket;
     }
 

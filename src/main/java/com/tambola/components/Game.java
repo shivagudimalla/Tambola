@@ -8,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -38,9 +39,11 @@ public class Game implements Runnable {
     private Integer bound;
     @Autowired
     private Integer numberOfPlayers;
-    private Dealer dealer;
     private List<Integer> announcedNumbers;
+    private ThreadLocalRandom threadLocalRandom;
     private PropertyChangeSupport observable;
+    @Autowired
+    private Dealer dealer;
     private List<Player> playerList;
     private AtomicBoolean isGameRunning;
     private List<Integer> rangeOfNumbersToBeGenerated;
@@ -66,7 +69,7 @@ public class Game implements Runnable {
         this.setRangeOfNumbersToBeGenerated(new ArrayList<>());
         this.setNextNumberToGenerate(new AtomicInteger(0));
         this.setSummary(new HashMap<>());
-
+        this.setDealer(dealer);
     }
 
     public List<Integer> getRangeOfNumbersToBeGenerated() {
@@ -137,7 +140,7 @@ public class Game implements Runnable {
         return playerList;
     }
 
-    public void setPlayerList(List<Player> playerList) {
+    void setPlayerList(List<Player> playerList) {
         this.playerList = playerList;
     }
 
@@ -157,11 +160,12 @@ public class Game implements Runnable {
         isFirstFiveNumbersWinnerAnnounced = firstFiveNumbersWinnerAnnounced;
     }
 
-    public Dealer getDealer() {
+    Dealer getDealer() {
         return dealer;
     }
 
-    public void setDealer(Dealer dealer) {
+    @Autowired
+    void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
 
@@ -213,43 +217,25 @@ public class Game implements Runnable {
         this.bound = bound;
     }
 
-    /**
-     * This method takes the list of players, generates the ticket and assigns it to players. It also registers the players to
-     * its property change event so that players can listen to the numbers whenever it is announced. and also starts the player threads
-     *
-     * @param players
-     * @param rows
-     * @param columns
-     * @param itemsPerRow
-     * @param bound
-     */
-
-    public void registerPlayersAndGenerateTickets(List<Player> players, Integer rows, Integer columns, Integer itemsPerRow, Integer bound) {
+    public void registerPlayersAndGenerateTickets(Integer numberOfPlayers, Integer rows, Integer columns, Integer itemsPerRow, Integer bound) {
 
         ThreadGroup playerGroup = new ThreadGroup("players");
-        players.forEach(player -> {
-            Ticket ticket = new Ticket(rows, columns, itemsPerRow, bound);
-            logger.info("Ticket of " + player.getName() + " is " + ticket.getTicketNumbers().toString());
-            player.setTicket(ticket);
+        for (Integer counter = 0; counter < numberOfPlayers; counter++) {
+            logger.info("Creating player thread player " + counter);
+            Player player = new Player(new Ticket(rows, columns, itemsPerRow, bound), "Player" + (counter + 1), this, "Player1" + "@gmail.com", this.getDealer().getGameValidator());
             this.addPropertyChangeListener(player);
+            this.getPlayerList().add(player);
             Thread playerThread = new Thread(playerGroup, player);
             playerThread.start();
 
-        });
-
+        }
         logger.info("Tickets created");
     }
 
-    /**
-     * This method registers the players and generates the tickets
-     * Once the tickets are generated and assigned to players, it starts generating the random numbers
-     * Once the game is finished it prints the summary of the Game.
-     */
-
     @Override
     public void run() {
-        registerPlayersAndGenerateTickets(this.getPlayerList(), this.getRows(), this.getColumns(), this.getItemsPerRow(), this.getBound());
-        this.populateNumbersForRandomGenerator(this.getBound());
+        registerPlayersAndGenerateTickets(this.getNumberOfPlayers(), this.getRows(), this.getColumns(), this.getItemsPerRow(), this.getBound());
+        this.populateNumbersForRandomGenerator();
         InputStream inputStream = System.in;
         Scanner randomGeneratorScanner = new Scanner(inputStream);
         this.generateRandomNumber(randomGeneratorScanner);
@@ -263,9 +249,6 @@ public class Game implements Runnable {
     }
 
 
-    /**
-     * Prints the game summary (Who won what)
-     */
     private void printSummary() {
         if (this.getSummary().size() > 0) {
             logger.info(GAME_SUMMARY);
@@ -275,13 +258,6 @@ public class Game implements Runnable {
         }
     }
 
-
-    /**
-     * Generates the random number from a list every time the input is N
-     * Ends the game when the input is Q
-     * It also publishes the numbers generated to the players
-     * @param randomGeneratorScanner
-     */
     private void generateRandomNumber(Scanner randomGeneratorScanner) {
         try {
 
@@ -290,7 +266,6 @@ public class Game implements Runnable {
                 String answer = null;
                 answer = randomGeneratorScanner.next().toUpperCase();
                 if (answer.equals(USER_INPUT_TO_QUIT_GAME)) {
-                    logger.info("You have Typed Q");
                     logger.info("ending the game");
                     logger.info("Current group thread is " + Thread.currentThread().getThreadGroup());
                     stopGame();
@@ -305,8 +280,8 @@ public class Game implements Runnable {
                     Integer oldValue = this.getAnnouncedNumbers().size() > 0 ? this.getAnnouncedNumbers().get(this.getAnnouncedNumbers().size() - 1) : 0;
                     logger.info("Generated number is " + randomNumber);
                     storeAnnouncedNumbers(randomNumber);
-                    this.getObservable().firePropertyChange("GeneratedNumber", oldValue, randomNumber);
-                    this.getNextNumberToGenerate().incrementAndGet();
+                    observable.firePropertyChange("GeneratedNumber", oldValue, randomNumber);
+                    nextNumberToGenerate.incrementAndGet();
 
                 }
 
@@ -322,21 +297,12 @@ public class Game implements Runnable {
 
     }
 
-    /**
-     * gets the random number from the list
-     * @return random number
-     */
     public Integer getRandomNumber() {
         logger.info(GENERATING_RANDOM_NUMBER);
-        return this.getRangeOfNumbersToBeGenerated().get(nextNumberToGenerate.get());
+        return rangeOfNumbersToBeGenerated.get(nextNumberToGenerate.get());
 
     }
 
-    /**
-     * stores the generated random number in the list to track the announced numbers
-     * if all the numbers are announced it sets the fullNumber announced variable to true so that the game can be ended
-     * @param randomNumber
-     */
     private void storeAnnouncedNumbers(Integer randomNumber) {
         this.getAnnouncedNumbers().add(randomNumber);
         if (this.getAnnouncedNumbers().size() == this.getBound()) {
@@ -345,27 +311,16 @@ public class Game implements Runnable {
         }
     }
 
-    /**
-     * stores the given range of numbers in the list and then the list is shuffled so that random number is fetched from the list
-     * @param bound
-     */
-    private void populateNumbersForRandomGenerator(Integer bound) {
-        this.getRangeOfNumbersToBeGenerated().addAll(IntStream.rangeClosed(1, bound)
-                .boxed().collect(Collectors.toList()));
+    private void populateNumbersForRandomGenerator() {
+        rangeOfNumbersToBeGenerated = IntStream.rangeClosed(1, this.getBound())
+                .boxed().collect(Collectors.toList());
         Collections.shuffle(rangeOfNumbersToBeGenerated);
     }
 
-    /**
-     * Stops the game by setting the flag to false which also stops all the player threads
-     */
     public void stopGame() {
         this.getIsGameRunningFlag().set(false);
     }
 
-    /**
-     *
-     * @return the game status
-     */
     public boolean getGameStatus() {
         return this.getIsGameRunningFlag().get();
     }
