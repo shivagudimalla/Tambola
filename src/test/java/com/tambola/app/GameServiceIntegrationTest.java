@@ -22,6 +22,10 @@ import java.util.concurrent.Future;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Integration test to check the application
+ */
+
 @RunWith(SpringRunner.class)
 @TestPropertySource(locations = "classpath:game.yml")
 public class GameServiceIntegrationTest {

@@ -12,11 +12,21 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
+
+/**
+ * Created by shivakumargudimalla on 8/29/19.
+ */
+
 @SpringBootConfiguration
 @ComponentScan(basePackages = {"com.tambola.*"})
 @PropertySources({
         @PropertySource("classpath:game.yml")
 })
+
+/**
+ * Starting point for the game.
+ * When the application starts, this class will be initiated and Game service is invoked
+ */
 public class TambolaApplication implements CommandLineRunner {
 
     final static Logger logger = Logger.getLogger(TambolaApplication.class);

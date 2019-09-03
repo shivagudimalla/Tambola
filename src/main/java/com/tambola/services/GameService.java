@@ -20,6 +20,13 @@ public class GameService {
     private PlayerService playerService;
 
     final static Logger logger = Logger.getLogger(Dealer.class);
+
+    /**
+     * This service calls gameValidator to validate the game properties.If game properties are valid,
+     * It creates Players and starts the dealer thread
+     *
+     * @throws InvalidPropertiesException throws this exception if the given rules doesnt meet the criteria
+     */
     public void startGame() throws InvalidPropertiesException {
         logger.info("Validating given properties");
         gameValidator.validatePropertiesBeforeStartingGame(this.getGame().getRows(), this.getGame().getColumns(), this.getGame().getItemsPerRow(), this.getGame().getBound(), this.getGame().getNumberOfPlayers());

@@ -10,6 +10,12 @@ import java.util.List;
 public class PlayerService {
     private List<Player> playerList;
 
+    /**
+     * This method creates the players based on the number of players input
+     *
+     * @param numberOfPlayers
+     * @return returns the list of players created
+     */
     public List<Player> createPlayers(Integer numberOfPlayers) {
         playerList = new ArrayList<>();
         for (Integer i = 0; i < numberOfPlayers; i++) {

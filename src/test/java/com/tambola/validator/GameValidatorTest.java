@@ -18,6 +18,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit test for Game validator
+ */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = GameValidator.class)
 public class GameValidatorTest {

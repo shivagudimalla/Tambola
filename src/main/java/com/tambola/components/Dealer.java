@@ -41,6 +41,13 @@ public class Dealer implements Runnable {
     }
 
 
+    /**
+     * this method calls the game validator to check the top row winner and sets the top row winner flag to true
+     *
+     * @param player
+     * @return
+     */
+
     public synchronized boolean checkTopRowWinner(Player player) {
         logger.info("Dealer checking Top row winner for the player " + player.getName());
         if(!this.getGame().isTopRowWinnerAnnounced()) {
@@ -57,6 +64,9 @@ public class Dealer implements Runnable {
         return false;
     }
 
+    /**
+     * this method calls the game stop method to end the game if all the winning combinations are completed
+     */
     public synchronized void stopGameIfAllCombinationsAreDone() {
 
         if (this.getGame().isFullHouseWinnerAnnounced() && this.getGame().isFirstFiveNumbersWinnerAnnounced() && this.getGame().isTopRowWinnerAnnounced()) {
@@ -64,6 +74,12 @@ public class Dealer implements Runnable {
         }
 
     }
+
+    /**
+     * this method calls the game validator to check the full house winner and sets the full house winner flag to true
+     * @param player
+     * @return
+     */
 
 
     public synchronized boolean checkFullHouse(Player player) {
@@ -84,6 +100,12 @@ public class Dealer implements Runnable {
 
     }
 
+    /**
+     * this method calls the game validator to check the early five winner and sets the early five winner flag to true
+     * @param player
+     * @return
+     */
+
     public synchronized boolean checkFirstFiveNumbers(Player player) {
 
         logger.info("Dealer checking FirstFiveNumbers for the player " + player.getName());
@@ -101,6 +123,9 @@ public class Dealer implements Runnable {
 
     }
 
+    /**
+     * Dealer thread starts the game thread
+     */
 
     @Override
     public void run() {

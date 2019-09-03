@@ -22,19 +22,22 @@ public class Ticket {
     final static Logger logger = Logger.getLogger(Ticket.class);
 
     public Ticket(Integer rows, Integer columns, Integer itemsPerRow, Integer totalNumberCount) {
-
         this.setColumns(columns);
         this.setRows(rows);
         this.setItemsPerRow(itemsPerRow);
         this.setTotalNumberCount(totalNumberCount);
-        threadLocalRandom=ThreadLocalRandom.current();
-        generateTicket();
-
+        this.setThreadLocalRandom(ThreadLocalRandom.current());
     }
 
+    /**
+     * this method generates the ticket based on the game rules.
+     * <p>
+     * Given range of numbers is divided into lower bound and upper bound for each row
+     * Based on the divided upper bound and lower bound for each row, numbers are filled randomly based on the random index generated
+     * by the random generator
+     */
 
     private void generateTicket() {
-
 
         Integer rows=this.getRows();
         Integer columns=this.getColumns();
@@ -45,19 +48,18 @@ public class Ticket {
         List<Integer> upperBoundList = getUpperBoundValuesToBeFilledPerRow(rangePerRow);
         List<List<Integer>> ticket = new ArrayList<>(rows);
 
-        for(Integer row=0;row< rows;row++) {
+        for(Integer row=0; row< rows; row++) {
 
             ticket.add(row,new ArrayList<>(Collections.nCopies(columns, 0)));
 
-            for(Integer column=0;column<itemsPerRow;column++) {
+            for(Integer column=0; column<itemsPerRow; column++) {
 
                 Integer randomValue=generateRandomNumber(lowerBoundList.get(row),upperBoundList.get(row));
                 Integer randomIndex=generateRandomNumber(0,columns);
 
                 if((ticket.get(row).size() > 0 && ticket.get(row).contains(randomValue)) || (ticket.get(row).size() > 0 && ticket.get(row).get(randomIndex) > 0)){
                     column--;
-                }
-                else {
+                } else {
                     ticket.get(row).set(randomIndex,randomValue);
                 }
 
@@ -69,23 +71,38 @@ public class Ticket {
     }
 
 
+    /**
+     * This method takes the range per row values and divides the lower bound limits for each row
+     * here the lower bound is not calculated for 1st row because by default the lower bound starts with 1 for the first row
+     *
+     * @param rangePerRow
+     * @return
+     */
+
     private ArrayList<Integer> getLowerBoundValuesToBeFilledPerRow(Integer rangePerRow) {
 
 
         ArrayList<Integer> lowerBoundList=new ArrayList<>();
         lowerBoundList.add(0,1);
 
-        for(Integer row=1;row<rows;row++) {
+        for(Integer row = 1; row<rows; row++) {
             lowerBoundList.add((rangePerRow*row)+1);
         }
 
         return lowerBoundList;
     }
 
+    /**
+     * This method takes the range per row values and divides the upper bound limits for each row
+     *
+     * @param rangePerRow
+     * @return
+     */
+
     private ArrayList<Integer> getUpperBoundValuesToBeFilledPerRow(int rangePerRow) {
 
         ArrayList<Integer> upperBoundList=new ArrayList<>();
-        for(Integer row=0;row<rows;row++) {
+        for(Integer row = 0; row<rows; row++) {
 
             upperBoundList.add((rangePerRow*(row+1))+1);
         }
@@ -94,7 +111,14 @@ public class Ticket {
     }
 
 
-    private Integer generateRandomNumber(Integer origin,Integer bound) {
+    /**
+     * this method uses threadLocalRandom to create random number from the given origin and bound
+     * here origin is inclusive and bound is exclusive
+     * @param origin
+     * @param bound
+     * @return
+     */
+    private Integer generateRandomNumber(Integer origin, Integer bound) {
         int randomValue=threadLocalRandom.nextInt(origin,bound);
 
         return randomValue;

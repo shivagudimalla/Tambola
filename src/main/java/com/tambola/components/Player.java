@@ -25,16 +25,6 @@ public class Player implements PropertyChangeListener,Runnable
     private List<Integer> numbersConsumed;
     private List<WinningCombinations> winningCombinations;
 
-    public Player(Ticket ticket, String name, Game game, String email, GameValidator gameValidator) {
-        this.setGameValidator(gameValidator);
-        this.setNumbersConsumed(new ArrayList<>());
-        this.setGame(game);
-        this.setName(name);
-        this.setTicket(ticket);
-        this.setEmail(email);
-        this.setWinningCombinations(new ArrayList<>());
-    }
-
     public Player(String name, String email) {
         this.setNumbersConsumed(new ArrayList<>());
         this.setName(name);
@@ -101,6 +91,11 @@ public class Player implements PropertyChangeListener,Runnable
     }
 
 
+    /**
+     * Whenever game thread announces a number, player will get to know through this method
+     *
+     * @param evt
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Integer valueAnnounced=(Integer)evt.getNewValue();
@@ -108,6 +103,12 @@ public class Player implements PropertyChangeListener,Runnable
         logger.info("Player "+this.getName() +" consumed "+ valueAnnounced);
     }
 
+
+    /**
+     * Once the game thread starts the player threads, based on the numbers announced players will cross check and validate
+     * with the game validator to see whether they have won or not. if they win , they tell the dealer, dealer will cross verify
+     * and announce the winner
+     */
     @Override
     public void run() {
         Integer fullCountCheckStart=this.getTicket().getRows()*this.getTicket().getItemsPerRow();
@@ -115,7 +116,7 @@ public class Player implements PropertyChangeListener,Runnable
         while(this.getGame().getGameStatus()) {
             if (this.getNumbersConsumed().size() >= EARLY_FIVE_COUNT_TO_CHECK && !this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
                 if(this.getGameValidator().checkFirstFiveNumbers(this.getTicket(),this.getNumbersConsumed()))
-                this.getGame().getDealer().checkFirstFiveNumbers(this);
+                    this.getGame().getDealer().checkFirstFiveNumbers(this);
             }
 
             if (this.getNumbersConsumed().size() >= fullCountCheckStart && !this.getGame().isFullHouseWinnerAnnounced()) {
@@ -127,7 +128,7 @@ public class Player implements PropertyChangeListener,Runnable
 
             if (this.getGame().getAnnouncedNumbers().size() >= topRowCountCheckStart && !this.getGame().isTopRowWinnerAnnounced()) {
                 if(this.getGameValidator().checkTopRowWinner(this.getTicket(),this.getNumbersConsumed()))
-                this.getGame().getDealer().checkTopRowWinner(this);
+                    this.getGame().getDealer().checkTopRowWinner(this);
             }
         }
 
