@@ -112,22 +112,22 @@ public class Player implements PropertyChangeListener,Runnable
      */
     @Override
     public void run() {
-        Integer fullCountCheckStart=this.getTicket().getRows()*this.getTicket().getItemsPerRow();
-        Integer topRowCountCheckStart=this.getTicket().getItemsPerRow();
+        int fullCountCheckStart = this.getTicket().getRows() * this.getTicket().getItemsPerRow();
+        int topRowCountCheckStart = this.getTicket().getItemsPerRow();
         while(this.getGame().getGameStatus()) {
-            if (this.getNumbersConsumed().size() >= EARLY_FIVE_COUNT_TO_CHECK && !this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
+            if (this.getNumbersConsumed().size() >= EARLY_FIVE_COUNT_TO_CHECK && !this.getGame().isFirstFiveNumbersWinnerAnnounced().get()) {
                 if(this.getGameValidator().checkFirstFiveNumbers(this.getTicket(),this.getNumbersConsumed()))
                     this.getGame().getDealer().checkFirstFiveNumbers(this);
             }
 
-            if (this.getNumbersConsumed().size() >= fullCountCheckStart && !this.getGame().isFullHouseWinnerAnnounced()) {
+            if (this.getNumbersConsumed().size() >= fullCountCheckStart && !this.getGame().isFullHouseWinnerAnnounced().get()) {
                 if (this.getGameValidator().checkFullHouse(this.getTicket(),this.getNumbersConsumed())) {
                     this.getGame().getDealer().checkFullHouse(this);
                 }
 
             }
 
-            if (this.getGame().getAnnouncedNumbers().size() >= topRowCountCheckStart && !this.getGame().isTopRowWinnerAnnounced()) {
+            if (this.getGame().getAnnouncedNumbers().size() >= topRowCountCheckStart && !this.getGame().isTopRowWinnerAnnounced().get()) {
                 if(this.getGameValidator().checkTopRowWinner(this.getTicket(),this.getNumbersConsumed()))
                     this.getGame().getDealer().checkTopRowWinner(this);
             }

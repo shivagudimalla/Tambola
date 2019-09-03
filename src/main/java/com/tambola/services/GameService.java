@@ -14,13 +14,13 @@ import java.util.List;
 @Service
 public class GameService {
 
-    @Autowired
+
     private Game game;
-    @Autowired
+
     private GameValidator gameValidator;
-    @Autowired
+
     private Dealer dealer;
-    @Autowired
+
     private PlayerService playerService;
 
     final static Logger logger = Logger.getLogger(Dealer.class);
@@ -50,7 +50,7 @@ public class GameService {
         return game;
     }
 
-
+    @Autowired
     public void setGame(Game game) {
         this.game = game;
     }
@@ -59,7 +59,7 @@ public class GameService {
         return gameValidator;
     }
 
-
+    @Autowired
     public void setGameValidator(GameValidator gameValidator) {
         this.gameValidator = gameValidator;
     }
@@ -68,7 +68,7 @@ public class GameService {
         return dealer;
     }
 
-
+    @Autowired
     public void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
@@ -77,6 +77,7 @@ public class GameService {
         return playerService;
     }
 
+    @Autowired
     public void setPlayerService(PlayerService playerService) {
         this.playerService = playerService;
     }

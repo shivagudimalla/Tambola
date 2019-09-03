@@ -22,23 +22,17 @@ import static com.tambola.constants.GameConstants.*;
 public class Game implements Runnable {
 
     final static Logger logger = Logger.getLogger(Game.class);
+    private AtomicBoolean isTopRowWinnerAnnounced;
+    private AtomicBoolean isFirstFiveNumbersWinnerAnnounced;
+    private AtomicBoolean isFullHouseWinnerAnnounced;
 
-    private volatile Boolean isTopRowWinnerAnnounced;
-    private volatile Boolean isFirstFiveNumbersWinnerAnnounced;
-    private volatile Boolean isFullHouseWinnerAnnounced;
     private AtomicBoolean isFullNumbersAnnounced;
 
-    @Autowired
     private Integer rows;
-    @Autowired
     private Integer columns;
-    @Autowired
     private Integer itemsPerRow;
-    @Autowired
     private Integer bound;
-    @Autowired
     private Integer numberOfPlayers;
-    @Autowired
     private Dealer dealer;
     private List<Integer> announcedNumbers;
     private PropertyChangeSupport observable;
@@ -60,14 +54,13 @@ public class Game implements Runnable {
         this.setNumberOfPlayers(numberOfPlayers);
         this.setObservable(new PropertyChangeSupport(this));
         this.setAnnouncedNumbers(new ArrayList<>());
-        this.setTopRowWinnerAnnounced(false);
-        this.setFirstFiveNumbersWinnerAnnounced(false);
-        this.setFullHouseWinnerAnnounced(false);
+        this.setTopRowWinnerAnnounced(new AtomicBoolean(false));
+        this.setFirstFiveNumbersWinnerAnnounced(new AtomicBoolean(false));
+        this.setFullHouseWinnerAnnounced(new AtomicBoolean(false));
         this.setIsFullNumbersAnnounced(new AtomicBoolean(false));
         this.setRangeOfNumbersToBeGenerated(new ArrayList<>());
         this.setNextNumberToGenerate(new AtomicInteger(0));
         this.setSummary(new HashMap<>());
-        this.setDealer(dealer);
     }
 
     public List<Integer> getRangeOfNumbersToBeGenerated() {
@@ -142,19 +135,19 @@ public class Game implements Runnable {
         this.playerList = playerList;
     }
 
-    Boolean isTopRowWinnerAnnounced() {
+    public AtomicBoolean isTopRowWinnerAnnounced() {
         return isTopRowWinnerAnnounced;
     }
 
-    void setTopRowWinnerAnnounced(Boolean topRowWinnerAnnounced) {
+    void setTopRowWinnerAnnounced(AtomicBoolean topRowWinnerAnnounced) {
         isTopRowWinnerAnnounced = topRowWinnerAnnounced;
     }
 
-    Boolean isFirstFiveNumbersWinnerAnnounced() {
+    public AtomicBoolean isFirstFiveNumbersWinnerAnnounced() {
         return isFirstFiveNumbersWinnerAnnounced;
     }
 
-    void setFirstFiveNumbersWinnerAnnounced(Boolean firstFiveNumbersWinnerAnnounced) {
+    void setFirstFiveNumbersWinnerAnnounced(AtomicBoolean firstFiveNumbersWinnerAnnounced) {
         isFirstFiveNumbersWinnerAnnounced = firstFiveNumbersWinnerAnnounced;
     }
 
@@ -162,11 +155,12 @@ public class Game implements Runnable {
         return dealer;
     }
 
+    @Autowired
     public void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
 
-    Boolean isFullHouseWinnerAnnounced() {
+    AtomicBoolean isFullHouseWinnerAnnounced() {
         return isFullHouseWinnerAnnounced;
     }
 
@@ -178,7 +172,7 @@ public class Game implements Runnable {
         this.announcedNumbers = announcedNumbers;
     }
 
-    void setFullHouseWinnerAnnounced(Boolean fullHouseWinnerAnnounced) {
+    void setFullHouseWinnerAnnounced(AtomicBoolean fullHouseWinnerAnnounced) {
         isFullHouseWinnerAnnounced = fullHouseWinnerAnnounced;
     }
 
@@ -186,6 +180,7 @@ public class Game implements Runnable {
         return rows;
     }
 
+    @Autowired
     public void setRows(Integer rows) {
         this.rows = rows;
     }
@@ -194,6 +189,7 @@ public class Game implements Runnable {
         return columns;
     }
 
+    @Autowired
     public void setColumns(Integer columns) {
         this.columns = columns;
     }
@@ -202,6 +198,7 @@ public class Game implements Runnable {
         return itemsPerRow;
     }
 
+    @Autowired
     public void setItemsPerRow(Integer itemsPerRow) {
         this.itemsPerRow = itemsPerRow;
     }
@@ -210,6 +207,7 @@ public class Game implements Runnable {
         return bound;
     }
 
+    @Autowired
     public void setBound(Integer bound) {
         this.bound = bound;
     }
@@ -287,9 +285,9 @@ public class Game implements Runnable {
     private void generateRandomNumber(Scanner randomGeneratorScanner) {
         try {
 
-            while (!(this.getIsFullNumbersAnnounced().get()) && !(this.isFullHouseWinnerAnnounced()) && this.getIsGameRunningFlag().get()) {
+            while (!(this.getIsFullNumbersAnnounced().get()) && !(this.isFullHouseWinnerAnnounced().get()) && this.getIsGameRunningFlag().get()) {
                 logger.info("Generate Ticket Number: N ");
-                String answer = null;
+                String answer;
                 answer = randomGeneratorScanner.next().toUpperCase();
                 if (answer.equals(USER_INPUT_TO_QUIT_GAME)) {
                     logger.info("You have Typed Q");
@@ -319,6 +317,7 @@ public class Game implements Runnable {
             randomGeneratorScanner.next();
             logger.error("Exception while reading input from user for number generation", e);
         } catch (NoSuchElementException ne) {
+            logger.error("Exception while reading input from scanner");
             throw ne;
         }
 

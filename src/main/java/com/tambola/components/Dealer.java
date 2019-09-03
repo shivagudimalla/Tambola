@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 public class Dealer implements Runnable {
 
     final static Logger logger = Logger.getLogger(Dealer.class);
-    @Autowired
+
     private Game game;
-    @Autowired
+
     private GameValidator gameValidator;
 
 
@@ -29,6 +29,7 @@ public class Dealer implements Runnable {
         return gameValidator;
     }
 
+    @Autowired
     public void setGameValidator(GameValidator gameValidator) {
         this.gameValidator = gameValidator;
     }
@@ -37,6 +38,7 @@ public class Dealer implements Runnable {
         return game;
     }
 
+    @Autowired
     public void setGame(Game game) {
         this.game = game;
     }
@@ -51,11 +53,11 @@ public class Dealer implements Runnable {
 
     public synchronized boolean checkTopRowWinner(Player player) {
         logger.info("Dealer checking Top row winner for the player " + player.getName());
-        if(!this.getGame().isTopRowWinnerAnnounced()) {
+        if (!this.getGame().isTopRowWinnerAnnounced().get()) {
             if (this.getGameValidator().checkTopRowWinner(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
                 player.getWinningCombinations().add(WinningCombinations.TOPLINE);
                 this.getGame().getSummary().put(WinningCombinations.TOPLINE,player);
-                this.getGame().setTopRowWinnerAnnounced(true);
+                this.getGame().isTopRowWinnerAnnounced().set(true);
                 logger.info("Top row numbers for  " + player.getName() + " is " + player.getTicket().getTicketNumbers().get(0));
                 logger.info("Winner of Top Line is " + player.getName());
                 return true;
@@ -70,7 +72,7 @@ public class Dealer implements Runnable {
      */
     public synchronized void stopGameIfAllCombinationsAreDone() {
 
-        if (this.getGame().isFullHouseWinnerAnnounced() && this.getGame().isFirstFiveNumbersWinnerAnnounced() && this.getGame().isTopRowWinnerAnnounced()) {
+        if (this.getGame().isFullHouseWinnerAnnounced().get() && this.getGame().isFirstFiveNumbersWinnerAnnounced().get() && this.getGame().isTopRowWinnerAnnounced().get()) {
             this.getGame().stopGame();
         }
 
@@ -86,9 +88,9 @@ public class Dealer implements Runnable {
     public synchronized boolean checkFullHouse(Player player) {
         logger.info("Dealer checking Full house for the player " + player.getName());
 
-        if(!this.getGame().isFullHouseWinnerAnnounced()) {
+        if (!this.getGame().isFullHouseWinnerAnnounced().get()) {
             if (this.getGameValidator().checkFullHouse(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
-                this.getGame().setFullHouseWinnerAnnounced(true);
+                this.getGame().isFullHouseWinnerAnnounced().set(true);
                 logger.info("Adding winning combinations");
                 player.getWinningCombinations().add(WinningCombinations.FULLHOUSE);
                 this.getGame().getSummary().put(WinningCombinations.FULLHOUSE,player);
@@ -111,11 +113,11 @@ public class Dealer implements Runnable {
 
         logger.info("Dealer checking FirstFiveNumbers for the player " + player.getName());
 
-        if(!this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
+        if (!this.getGame().isFirstFiveNumbersWinnerAnnounced().get()) {
             if (this.getGameValidator().checkFirstFiveNumbers(player.getTicket(), this.getGame().getAnnouncedNumbers())) {
                 player.getWinningCombinations().add(WinningCombinations.EARLYFIVE);
                 this.getGame().getSummary().put(WinningCombinations.EARLYFIVE,player);
-                this.getGame().setFirstFiveNumbersWinnerAnnounced(true);
+                this.getGame().isFirstFiveNumbersWinnerAnnounced().set(true);
                 logger.info("Winner of firstFiveNumber is " + player.getName());
                 return true;
             }
