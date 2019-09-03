@@ -62,7 +62,6 @@ public class GameServiceIntegrationTest {
             Thread.sleep(9000);
         }
         assertTrue(game.getPlayerList().size() == 2);
-        assertTrue(game.getSummary().size() == 3);
 
     }
 

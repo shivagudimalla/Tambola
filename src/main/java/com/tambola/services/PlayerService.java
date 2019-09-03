@@ -1,9 +1,12 @@
 package com.tambola.services;
 
 import com.tambola.components.Player;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PlayerService {
 
     /**
@@ -13,15 +16,14 @@ public class PlayerService {
      * @return returns the list of players created
      */
     public List<Player> createPlayers(Integer numberOfPlayers) {
-       /* List<Player> playerList = new ArrayList<>();
+        List<Player> playerList = new ArrayList<>();
         for (Integer i = 0; i < numberOfPlayers; i++) {
             String name = "player" + (i + 1);
             String email = name + "@mail.com";
             Player player = new Player(name, email);
             playerList.add(player);
         }
-        return playerList;*/
-        return null;
+        return playerList;
     }
 
 }

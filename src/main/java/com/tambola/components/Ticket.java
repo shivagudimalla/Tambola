@@ -32,10 +32,10 @@ public class Ticket {
 
     /**
      * this method generates the ticket based on the game rules.
-     * <p>
+     *
      * Given range of numbers is divided into lower bound and upper bound for each row
      * Based on the divided upper bound and lower bound for each row, numbers are filled randomly based on the random index generated
-     * by the random generator
+     *  by the random generator
      */
 
     private void generateTicket() {
@@ -49,11 +49,11 @@ public class Ticket {
         List<Integer> upperBoundList = getUpperBoundValuesToBeFilledPerRow(rangePerRow);
         List<List<Integer>> ticket = new ArrayList<>(rows);
 
-        for(Integer row=0; row< rows; row++) {
+        for (Integer row = 0; row < rows; row++) {
 
             ticket.add(row,new ArrayList<>(Collections.nCopies(columns, 0)));
 
-            for(Integer column=0; column<itemsPerRow; column++) {
+            for (Integer column = 0; column < itemsPerRow; column++) {
 
                 Integer randomValue=generateRandomNumber(lowerBoundList.get(row),upperBoundList.get(row));
                 Integer randomIndex=generateRandomNumber(0,columns);
@@ -86,7 +86,7 @@ public class Ticket {
         ArrayList<Integer> lowerBoundList=new ArrayList<>();
         lowerBoundList.add(0,1);
 
-        for(Integer row = 1; row<rows; row++) {
+        for (Integer row = 1; row < rows; row++) {
             lowerBoundList.add((rangePerRow*row)+1);
         }
 
@@ -103,7 +103,7 @@ public class Ticket {
     private ArrayList<Integer> getUpperBoundValuesToBeFilledPerRow(int rangePerRow) {
 
         ArrayList<Integer> upperBoundList=new ArrayList<>();
-        for(Integer row = 0; row<rows; row++) {
+        for (Integer row = 0; row < rows; row++) {
 
             upperBoundList.add((rangePerRow*(row+1))+1);
         }
