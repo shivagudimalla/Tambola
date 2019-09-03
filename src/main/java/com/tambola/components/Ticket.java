@@ -27,6 +27,7 @@ public class Ticket {
         this.setItemsPerRow(itemsPerRow);
         this.setTotalNumberCount(totalNumberCount);
         this.setThreadLocalRandom(ThreadLocalRandom.current());
+        generateTicket();
     }
 
     /**
