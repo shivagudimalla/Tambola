@@ -1,6 +1,6 @@
-package com.sony.Exception;
+package com.tambola.Exception;
 
-import com.sony.components.Dealer;
+import com.tambola.components.Dealer;
 import org.apache.log4j.Logger;
 
 public class InvalidPropertiesException extends RuntimeException {

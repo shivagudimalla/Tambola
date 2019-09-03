@@ -1,7 +1,7 @@
-package com.sony.validator;
+package com.tambola.validator;
 
-import com.sony.Exception.InvalidPropertiesException;
-import com.sony.components.Ticket;
+import com.tambola.Exception.InvalidPropertiesException;
+import com.tambola.components.Ticket;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

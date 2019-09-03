@@ -1,0 +1,5 @@
+game.rows=3
+game.columns=10
+game.itemsPerRow=5
+game.bound=25
+game.numberOfPlayers=2

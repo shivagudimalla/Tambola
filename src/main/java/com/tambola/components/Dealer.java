@@ -1,6 +1,6 @@
-package com.sony.components;
+package com.tambola.components;
 
-import com.sony.validator.GameValidator;
+import com.tambola.validator.GameValidator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,14 +18,11 @@ public class Dealer implements Runnable {
     @Autowired
     private GameValidator gameValidator;
 
+
     public Dealer(Game game, GameValidator gameValidator) {
         this.setGame(game);
         this.setGameValidator(gameValidator);
-        game.setDealer(this);
     }
-
-
-
 
     public GameValidator getGameValidator() {
         return gameValidator;
@@ -34,7 +31,6 @@ public class Dealer implements Runnable {
     public void setGameValidator(GameValidator gameValidator) {
         this.gameValidator = gameValidator;
     }
-
 
     public Game getGame() {
         return game;
@@ -61,6 +57,14 @@ public class Dealer implements Runnable {
         return false;
     }
 
+    public synchronized void stopGameIfAllCombinationsAreDone() {
+
+        if (this.getGame().isFullHouseWinnerAnnounced() && this.getGame().isFirstFiveNumbersWinnerAnnounced() && this.getGame().isTopRowWinnerAnnounced()) {
+            this.getGame().stopGame();
+        }
+
+    }
+
 
     public synchronized boolean checkFullHouse(Player player) {
         logger.info("Dealer checking Full house for the player " + player.getName());
@@ -72,6 +76,7 @@ public class Dealer implements Runnable {
                 player.getWinningCombinations().add(WinningCombinations.FULLHOUSE);
                 this.getGame().getSummary().put(WinningCombinations.FULLHOUSE,player);
                 logger.info("Winner of fullHouse is " + player.getName());
+                stopGameIfAllCombinationsAreDone();
                 return true;
             }
         }
@@ -79,8 +84,8 @@ public class Dealer implements Runnable {
 
     }
 
-
     public synchronized boolean checkFirstFiveNumbers(Player player) {
+
         logger.info("Dealer checking FirstFiveNumbers for the player " + player.getName());
 
         if(!this.getGame().isFirstFiveNumbersWinnerAnnounced()) {
@@ -95,6 +100,7 @@ public class Dealer implements Runnable {
         return false;
 
     }
+
 
     @Override
     public void run() {

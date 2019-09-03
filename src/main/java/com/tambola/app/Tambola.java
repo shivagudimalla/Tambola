@@ -1,8 +1,8 @@
-package com.sony.app;
+package com.tambola.app;
 
-import com.sony.components.Dealer;
-import com.sony.components.Game;
-import com.sony.validator.GameValidator;
+import com.tambola.components.Dealer;
+import com.tambola.components.Game;
+import com.tambola.validator.GameValidator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

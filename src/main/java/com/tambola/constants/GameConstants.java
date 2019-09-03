@@ -1,4 +1,4 @@
-package com.sony.constants;
+package com.tambola.constants;
 
 public final class GameConstants {
 

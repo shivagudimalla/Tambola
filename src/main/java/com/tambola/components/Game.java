@@ -1,12 +1,12 @@
-package com.sony.components;
+package com.tambola.components;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.sony.constants.GameConstants.*;
+import static com.tambola.constants.GameConstants.*;
 
 /**
  * Created by shivakumargudimalla on 8/31/19.
@@ -29,46 +29,29 @@ public class Game implements Runnable {
     private volatile Boolean isFullHouseWinnerAnnounced;
     private AtomicBoolean isFullNumbersAnnounced;
 
-    @Value("${game.rows:5}")
+    @Autowired
     private Integer rows;
-    @Value("${game.columns:10}")
+    @Autowired
     private Integer columns;
-    @Value("${game.itemsPerRow:5}")
+    @Autowired
     private Integer itemsPerRow;
-    @Value("${game.bound:90}")
+    @Autowired
     private Integer bound;
-    @Value("${game.numberOfPlayers:5}")
+    @Autowired
+    private Dealer dealer;
+    @Autowired
     private Integer numberOfPlayers;
+
+
     private List<Integer> announcedNumbers;
     private ThreadLocalRandom threadLocalRandom;
     private PropertyChangeSupport observable;
-    private Dealer dealer;
+
     private List<Player> playerList;
     private AtomicBoolean isGameRunning;
     private List<Integer> rangeOfNumbersToBeGenerated;
     private AtomicInteger nextNumberToGenerate;
     private Map<WinningCombinations, Player> summary;
-
-
-    public Game() throws Exception {
-        this.setGameRunning(new AtomicBoolean(true));
-        this.setRows(rows);
-        this.setColumns(columns);
-        this.setItemsPerRow(itemsPerRow);
-        this.setBound(bound);
-        this.setPlayerList(new ArrayList<>());
-        this.setNumberOfPlayers(numberOfPlayers);
-        observable = new PropertyChangeSupport(this);
-        this.setAnnouncedNumbers(new ArrayList<>());
-        threadLocalRandom = ThreadLocalRandom.current();
-        this.setTopRowWinnerAnnounced(false);
-        this.setFirstFiveNumbersWinnerAnnounced(false);
-        this.setFullHouseWinnerAnnounced(false);
-        this.setIsFullNumbersAnnounced(new AtomicBoolean(false));
-        rangeOfNumbersToBeGenerated = new ArrayList<>();
-        nextNumberToGenerate = new AtomicInteger(0);
-        this.setSummary(new HashMap<>());
-    }
 
 
     public Game(Integer rows, Integer columns, Integer itemsPerRow, Integer bound, Integer numberOfPlayers) {
@@ -80,17 +63,58 @@ public class Game implements Runnable {
         this.setBound(bound);
         this.setPlayerList(new ArrayList<>());
         this.setNumberOfPlayers(numberOfPlayers);
-        observable = new PropertyChangeSupport(this);
+        this.setObservable(new PropertyChangeSupport(this));
         this.setAnnouncedNumbers(new ArrayList<>());
-        threadLocalRandom = ThreadLocalRandom.current();
+        this.setThreadLocalRandom(ThreadLocalRandom.current());
         this.setTopRowWinnerAnnounced(false);
         this.setFirstFiveNumbersWinnerAnnounced(false);
         this.setFullHouseWinnerAnnounced(false);
         this.setIsFullNumbersAnnounced(new AtomicBoolean(false));
-        rangeOfNumbersToBeGenerated = new ArrayList<>();
-        nextNumberToGenerate = new AtomicInteger(0);
+        this.setRangeOfNumbersToBeGenerated(new ArrayList<>());
+        this.setNextNumberToGenerate(new AtomicInteger(0));
         this.setSummary(new HashMap<>());
+        this.setDealer(dealer);
 
+    }
+
+    public List<Integer> getRangeOfNumbersToBeGenerated() {
+        return rangeOfNumbersToBeGenerated;
+    }
+
+    public void setRangeOfNumbersToBeGenerated(List<Integer> rangeOfNumbersToBeGenerated) {
+        this.rangeOfNumbersToBeGenerated = rangeOfNumbersToBeGenerated;
+    }
+
+    public AtomicInteger getNextNumberToGenerate() {
+        return nextNumberToGenerate;
+    }
+
+    public void setNextNumberToGenerate(AtomicInteger nextNumberToGenerate) {
+        this.nextNumberToGenerate = nextNumberToGenerate;
+    }
+
+    public ThreadLocalRandom getThreadLocalRandom() {
+        return threadLocalRandom;
+    }
+
+    public void setThreadLocalRandom(ThreadLocalRandom threadLocalRandom) {
+        this.threadLocalRandom = threadLocalRandom;
+    }
+
+    public PropertyChangeSupport getObservable() {
+        return observable;
+    }
+
+    public void setObservable(PropertyChangeSupport observable) {
+        this.observable = observable;
+    }
+
+    public AtomicBoolean getIsGameRunning() {
+        return isGameRunning;
+    }
+
+    public void setIsGameRunning(AtomicBoolean isGameRunning) {
+        this.isGameRunning = isGameRunning;
     }
 
     public AtomicBoolean getIsGameRunningFlag() {
@@ -133,7 +157,7 @@ public class Game implements Runnable {
         observable.removePropertyChangeListener(pcl);
     }
 
-    List<Player> getPlayerList() {
+    public List<Player> getPlayerList() {
         return playerList;
     }
 
@@ -232,8 +256,10 @@ public class Game implements Runnable {
     @Override
     public void run() {
         registerPlayersAndGenerateTickets(this.getNumberOfPlayers(), this.getRows(), this.getColumns(), this.getItemsPerRow(), this.getBound());
-        this.populateNumbersForRandomGenerator();
-        this.generateRandomNumber();
+        this.populateNumbersForRandomGenerator(this.getBound());
+        InputStream inputStream = System.in;
+        Scanner randomGeneratorScanner = new Scanner(inputStream);
+        this.generateRandomNumber(randomGeneratorScanner);
         this.stopGame();
         try {
             Thread.sleep(5000);
@@ -245,7 +271,7 @@ public class Game implements Runnable {
 
 
     private void printSummary() {
-        if(this.getSummary().size() > 0) {
+        if (this.getSummary().size() > 0) {
             logger.info(GAME_SUMMARY);
             this.getSummary().forEach((winningCombinations, player) -> {
                 logger.info(player.getName() + " " + WON + " " + winningCombinations);
@@ -253,16 +279,16 @@ public class Game implements Runnable {
         }
     }
 
-    private void generateRandomNumber() {
-        Scanner inputScanner = new Scanner(System.in);
+    private void generateRandomNumber(Scanner randomGeneratorScanner) {
         try {
-            while (!(this.getIsFullNumbersAnnounced().get()) && !(this.isFullHouseWinnerAnnounced()) && this.getIsGameRunningFlag().get()) {
 
+            while (!(this.getIsFullNumbersAnnounced().get()) && !(this.isFullHouseWinnerAnnounced()) && this.getIsGameRunningFlag().get()) {
                 logger.info("Generate Ticket Number: N ");
                 String answer = null;
-                answer = inputScanner.nextLine().toUpperCase();
+                answer = randomGeneratorScanner.next().toUpperCase();
                 if (answer.equals(USER_INPUT_TO_QUIT_GAME)) {
-                    logger.info("You decided to quit the game, ending the game");
+                    logger.info("You have Typed Q");
+                    logger.info("ending the game");
                     logger.info("Current group thread is " + Thread.currentThread().getThreadGroup());
                     stopGame();
 
@@ -276,22 +302,26 @@ public class Game implements Runnable {
                     Integer oldValue = this.getAnnouncedNumbers().size() > 0 ? this.getAnnouncedNumbers().get(this.getAnnouncedNumbers().size() - 1) : 0;
                     logger.info("Generated number is " + randomNumber);
                     storeAnnouncedNumbers(randomNumber);
-                    observable.firePropertyChange("GeneratedNumber", oldValue, randomNumber);
-                    nextNumberToGenerate.incrementAndGet();
+                    this.getObservable().firePropertyChange("GeneratedNumber", oldValue, randomNumber);
+                    this.getNextNumberToGenerate().incrementAndGet();
 
                 }
+
+
             }
         } catch (InputMismatchException e) {
             logger.info("Please provide valid request. 'N' to generate next number, 'Q' to quit the game");
-            inputScanner.next();
+            randomGeneratorScanner.next();
             logger.error("Exception while reading input from user for number generation", e);
+        } catch (NoSuchElementException ne) {
+            throw ne;
         }
 
     }
 
     public Integer getRandomNumber() {
         logger.info(GENERATING_RANDOM_NUMBER);
-        return rangeOfNumbersToBeGenerated.get(nextNumberToGenerate.get());
+        return this.getRangeOfNumbersToBeGenerated().get(nextNumberToGenerate.get());
 
     }
 
@@ -303,9 +333,9 @@ public class Game implements Runnable {
         }
     }
 
-    private void populateNumbersForRandomGenerator() {
-        rangeOfNumbersToBeGenerated = IntStream.rangeClosed(1, this.getBound())
-                .boxed().collect(Collectors.toList());
+    private void populateNumbersForRandomGenerator(Integer bound) {
+        this.getRangeOfNumbersToBeGenerated().addAll(IntStream.rangeClosed(1, bound)
+                .boxed().collect(Collectors.toList()));
         Collections.shuffle(rangeOfNumbersToBeGenerated);
     }
 

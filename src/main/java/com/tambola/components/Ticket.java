@@ -1,9 +1,10 @@
-package com.sony.components;
+package com.tambola.components;
 
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -16,7 +17,7 @@ public class Ticket {
     private Integer itemsPerRow;
     private Integer totalNumberCount;
     private ThreadLocalRandom threadLocalRandom;
-    private ArrayList<ArrayList<Integer>>  ticketNumbers;
+    private List<List<Integer>> ticketNumbers;
 
     final static Logger logger = Logger.getLogger(Ticket.class);
 
@@ -40,9 +41,9 @@ public class Ticket {
         Integer totalNumberCount=this.getTotalNumberCount();
         Integer itemsPerRow=this.getItemsPerRow();
         Integer rangePerRow=totalNumberCount/rows;
-        ArrayList<Integer> lowerBoundList=getLowerBoundValuesToBeFilledPerRow(rangePerRow);
-        ArrayList<Integer> upperBoundList=getUpperBoundValuesToBeFilledPerRow(rangePerRow);
-        ArrayList<ArrayList<Integer>> ticket=new ArrayList<>(rows);
+        List<Integer> lowerBoundList = getLowerBoundValuesToBeFilledPerRow(rangePerRow);
+        List<Integer> upperBoundList = getUpperBoundValuesToBeFilledPerRow(rangePerRow);
+        List<List<Integer>> ticket = new ArrayList<>(rows);
 
         for(Integer row=0;row< rows;row++) {
 
@@ -136,11 +137,11 @@ public class Ticket {
         return threadLocalRandom;
     }
 
-    public ArrayList<ArrayList<Integer>> getTicketNumbers() {
+    public List<List<Integer>> getTicketNumbers() {
         return ticketNumbers;
     }
 
-    public void setTicketNumbers(ArrayList<ArrayList<Integer>> ticketNumbers) {
+    public void setTicketNumbers(List<List<Integer>> ticketNumbers) {
         this.ticketNumbers = ticketNumbers;
     }
 
