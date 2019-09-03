@@ -22,6 +22,7 @@ public class Dealer implements Runnable {
     public Dealer(Game game, GameValidator gameValidator) {
         this.setGame(game);
         this.setGameValidator(gameValidator);
+        game.setDealer(this);
     }
 
     public GameValidator getGameValidator() {

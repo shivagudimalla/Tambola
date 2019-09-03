@@ -36,14 +36,11 @@ public class Game implements Runnable {
     private Integer itemsPerRow;
     @Autowired
     private Integer bound;
-    private Dealer dealer;
     @Autowired
     private Integer numberOfPlayers;
-
-
+    private Dealer dealer;
     private List<Integer> announcedNumbers;
     private PropertyChangeSupport observable;
-
     private List<Player> playerList;
     private AtomicBoolean isGameRunning;
     private List<Integer> rangeOfNumbersToBeGenerated;
@@ -164,7 +161,6 @@ public class Game implements Runnable {
         return dealer;
     }
 
-    @Autowired
     public void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
@@ -233,6 +229,7 @@ public class Game implements Runnable {
         ThreadGroup playerGroup = new ThreadGroup("players");
         players.forEach(player -> {
             Ticket ticket = new Ticket(rows, columns, itemsPerRow, bound);
+            logger.info("Ticket of " + player.getName() + " is " + ticket.getTicketNumbers().toString());
             player.setTicket(ticket);
             this.addPropertyChangeListener(player);
             Thread playerThread = new Thread(playerGroup, player);

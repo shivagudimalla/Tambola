@@ -54,7 +54,6 @@ public class Player implements PropertyChangeListener,Runnable
     }
 
     public void setTicket(Ticket ticket) {
-        logger.info("Ticket of " +this.getName()+" is "+ticket.getTicketNumbers().toString());
         this.ticket = ticket;
     }
 
