@@ -35,6 +35,13 @@ public class Player implements PropertyChangeListener,Runnable
         this.setWinningCombinations(new ArrayList<>());
     }
 
+    public Player(String name, String email) {
+        this.setNumbersConsumed(new ArrayList<>());
+        this.setName(name);
+        this.setEmail(email);
+        this.setWinningCombinations(new ArrayList<>());
+    }
+
 
     public List<Integer> getNumbersConsumed() {
         return numbersConsumed;

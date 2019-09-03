@@ -37,7 +37,6 @@ public class Game implements Runnable {
     private Integer itemsPerRow;
     @Autowired
     private Integer bound;
-    @Autowired
     private Dealer dealer;
     @Autowired
     private Integer numberOfPlayers;
@@ -73,7 +72,6 @@ public class Game implements Runnable {
         this.setRangeOfNumbersToBeGenerated(new ArrayList<>());
         this.setNextNumberToGenerate(new AtomicInteger(0));
         this.setSummary(new HashMap<>());
-        this.setDealer(dealer);
 
     }
 
@@ -161,7 +159,7 @@ public class Game implements Runnable {
         return playerList;
     }
 
-    void setPlayerList(List<Player> playerList) {
+    public void setPlayerList(List<Player> playerList) {
         this.playerList = playerList;
     }
 
@@ -181,12 +179,12 @@ public class Game implements Runnable {
         isFirstFiveNumbersWinnerAnnounced = firstFiveNumbersWinnerAnnounced;
     }
 
-    Dealer getDealer() {
+    public Dealer getDealer() {
         return dealer;
     }
 
     @Autowired
-    void setDealer(Dealer dealer) {
+    public void setDealer(Dealer dealer) {
         this.dealer = dealer;
     }
 
@@ -238,24 +236,24 @@ public class Game implements Runnable {
         this.bound = bound;
     }
 
-    public void registerPlayersAndGenerateTickets(Integer numberOfPlayers, Integer rows, Integer columns, Integer itemsPerRow, Integer bound) {
+    public void registerPlayersAndGenerateTickets(List<Player> players, Integer rows, Integer columns, Integer itemsPerRow, Integer bound) {
 
         ThreadGroup playerGroup = new ThreadGroup("players");
-        for (Integer counter = 0; counter < numberOfPlayers; counter++) {
-            logger.info("Creating player thread player " + counter);
-            Player player = new Player(new Ticket(rows, columns, itemsPerRow, bound), "Player" + (counter + 1), this, "Player1" + "@gmail.com", this.getDealer().getGameValidator());
+        players.forEach(player -> {
+            Ticket ticket = new Ticket(rows, columns, itemsPerRow, bound);
+            player.setTicket(ticket);
             this.addPropertyChangeListener(player);
-            this.getPlayerList().add(player);
             Thread playerThread = new Thread(playerGroup, player);
             playerThread.start();
 
-        }
+        });
+
         logger.info("Tickets created");
     }
 
     @Override
     public void run() {
-        registerPlayersAndGenerateTickets(this.getNumberOfPlayers(), this.getRows(), this.getColumns(), this.getItemsPerRow(), this.getBound());
+        registerPlayersAndGenerateTickets(this.getPlayerList(), this.getRows(), this.getColumns(), this.getItemsPerRow(), this.getBound());
         this.populateNumbersForRandomGenerator(this.getBound());
         InputStream inputStream = System.in;
         Scanner randomGeneratorScanner = new Scanner(inputStream);

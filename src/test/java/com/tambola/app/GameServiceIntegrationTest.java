@@ -3,6 +3,7 @@ package com.tambola.app;
 import com.tambola.components.Dealer;
 import com.tambola.components.Game;
 import com.tambola.services.GameService;
+import com.tambola.services.PlayerService;
 import com.tambola.validator.GameValidator;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayInputStream;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -33,6 +33,8 @@ public class GameServiceIntegrationTest {
     private Game game;
     @Autowired
     private GameValidator gameValidator;
+    @Autowired
+    private PlayerService playerService;
     @Value("${game.bound:90}")
     private Integer bound;
 
@@ -46,7 +48,7 @@ public class GameServiceIntegrationTest {
     }
 
     @Test
-    public void testTambolaApplicationWithValidProperties() throws InterruptedException, ExecutionException {
+    public void testTambolaApplicationWithValidProperties() throws InterruptedException {
         Runnable runnable = () -> {
             gameService.startGame();
         };
@@ -119,5 +121,11 @@ public class GameServiceIntegrationTest {
             return new GameService();
         }
 
+        @Bean
+        public PlayerService playerService() {
+            return new PlayerService();
+        }
+
     }
+
 }
