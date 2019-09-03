@@ -41,27 +41,27 @@ public class TambolaApplication implements CommandLineRunner {
     }
 
     @Bean(name = "numberOfPlayers")
-    public Integer getNumberOfPlayers(@Value("${numberOfPlayers:5}") Integer numberOfPlayers) {
+    public Integer getNumberOfPlayers(@Value("${game.numberOfPlayers:5}") Integer numberOfPlayers) {
         return numberOfPlayers;
     }
 
     @Bean(name = "rows")
-    public Integer getRows(@Value("${rows:5}") Integer rows) {
+    public Integer getRows(@Value("${game.rows:5}") Integer rows) {
         return rows;
     }
 
     @Bean(name = "columns")
-    public Integer getColumns(@Value("${columns:10}") Integer columns) {
+    public Integer getColumns(@Value("${game.columns:10}") Integer columns) {
         return columns;
     }
 
     @Bean(name = "itemsPerRow")
-    public Integer getItemsPerRow(@Value("${itemsPerRow:5}") Integer itemsPerRow) {
+    public Integer getItemsPerRow(@Value("${game.itemsPerRow:5}") Integer itemsPerRow) {
         return itemsPerRow;
     }
 
     @Bean(name = "bound")
-    public Integer getBound(@Value("${bound:90}") Integer bound) {
+    public Integer getBound(@Value("${game.bound:90}") Integer bound) {
         return bound;
     }
 
